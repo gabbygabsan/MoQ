@@ -1,0 +1,15 @@
+{
+  "material": "PP",
+  "kavitaeten": 1,
+  "kanal_durchmesser_mm": 7.0,
+  "kanal_abstand_mm": 13.0,
+  "volume_mm3": 11259.424639000788,
+  "surface_area_mm2": 10463.323177339542,
+  "bbox_x": 73.5,
+  "bbox_y": 73.5,
+  "bbox_z": 8.5,
+  "centroid_x": -1.1914129976412784e-16,
+  "centroid_y": 1.8524437527737895e-15,
+  "centroid_z": 1.9176272989319796,
+  "aspect_ratio": 8.647058823529411
+}
