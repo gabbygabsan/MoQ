@@ -1,3 +1,15 @@
+import numpy as np
+
+def get_bounding_box_centroid(mesh):
+    """
+    Gibt den Mittelpunkt der Bounding Box des Mesh als numpy‑Array zurück.
+    """
+    # mesh.bounds liefert [[min_x, min_y, min_z], [max_x, max_y, max_z]]
+    min_bound, max_bound = mesh.bounds
+    return np.mean([min_bound, max_bound], axis=0)
+
+
+
 def extract_geometry_features(mesh):
     extents = mesh.bounding_box.extents
     return {

@@ -7,49 +7,51 @@ from logic.geometry import extract_geometry_features
 from logic.ml_lgbm import predict_kuehlleistung_lgbm
 from viewer.plotly_viewer import show_3d_plotly
 from router import navigate_to
+
+# Neuer Import: unsere Mehrkriterien‑Analyse
 from logic.parting_analysis import analyze_parting_plane
+
 import plotly.graph_objects as go
 
 def render_config():
-    st.sidebar.title("🧭 Navigation")
-    seite = st.sidebar.radio("Seite wählen:", ["🏠 Start", "⚙️ Konfigurator"], index=1)
+    st.sidebar.title(" Navigation")
+    seite = st.sidebar.radio("Seite wählen:", ["Start", "⚙️ Konfigurator"], index=1)
     navigate_to(seite)
 
-    show_parting_analysis = st.sidebar.checkbox("Trennflächen-Analyse anzeigen", value=False)
-
+    show_parting_analysis = st.sidebar.checkbox("Trennflächen‑Analyse anzeigen", value=False)
     uploaded_file, config = render_sidebar()
 
-    st.title("🧠 MoQ – Smart Cooling & Tooling")
-    st.markdown("""
-    Willkommen bei **MoQ**! Dieses Tool hilft dir, Kühlkanäle und Kühlleistung für Spritzgusswerkzeuge intelligent zu planen.
-    """)
+    st.title("MoQ – Smart Cooling & Tooling")
+    st.markdown("Willkommen bei **MoQ**! ...")
 
-    if uploaded_file is not None and uploaded_file.name.endswith(".stl"):
-        mesh = config["mesh"] = config["trimesh_loader"](uploaded_file)
+    if uploaded_file and uploaded_file.name.endswith(".stl"):
+        mesh = config["trimesh_loader"](uploaded_file)
         st.success("Geometrie erfolgreich geladen!")
 
+        # Heatmap‑Test etc.
         try:
-            test_samples = config["heatmap_test"](mesh)
-            st.write("🔬 Anzahl Heatmap-Punkte:", test_samples.shape[0])
+            samples = config["heatmap_test"](mesh)
+            st.write("Anzahl Heatmap‑Punkte:", samples.shape[0])
         except Exception as e:
-            st.warning(f"Heatmap-Probe fehlgeschlagen: {e}")
+            st.warning(f"Heatmap‑Test fehlgeschlagen: {e}")
 
         features = extract_geometry_features(mesh)
-        st.write("**Bounding Box (X, Y, Z):**", (features["bbox_x"], features["bbox_y"], features["bbox_z"]))
-        st.write("**Volumen:**", f"{features['volume_mm3']:.2f} mm³")
-        st.write("**Oberfläche:**", f"{features['surface_area_mm2']:.2f} mm²")
+        st.write("**Bounding Box (X, Y, Z):**",
+                 (features["bbox_x"], features["bbox_y"], features["bbox_z"]))
+        st.write("**Volumen:**", f"{features['volume_mm3']:.2f} mm³")
+        st.write("**Oberfläche:**", f"{features['surface_area_mm2']:.2f} mm²")
         st.write("**Aspektverhältnis:**", f"{features['aspect_ratio']:.2f}")
 
         undercut_faces = []
         if show_parting_analysis:
             analyse = analyze_parting_plane(mesh)
-            st.subheader("🧩 Trennflächen-Analyse")
-            st.write("🔄 Symmetrien erkannt:", analyse["symmetries"])
-            st.write("📐 Beste Trennfläche:", analyse["best_plane"])
-            st.write("🚫 Hinterschneidungen erkannt:", len(analyse["undercuts"]))
+            st.subheader("Trennflächen‑Analyse")
+            st.write("Symmetrien erkannt:", analyse["symmetries"])
+            st.write("Beste Trennfläche:", analyse["best_plane"])
+            st.write("Anzahl Hinterschneidungen:", len(analyse["undercuts"]))
             undercut_faces = analyse["undercuts"]
 
-        with st.expander("🧊 3D-Vorschau mit Kühlkanälen anzeigen"):
+        with st.expander("3D‑Vorschau mit Kühlkanälen"):
             show_3d_plotly(
                 mesh,
                 kanal_durchmesser=config["kanal_durchmesser"],
@@ -59,8 +61,7 @@ def render_config():
                 anzahl_z=config["anzahl_z"],
                 heatmap=config["heatmap"],
                 highlight_faces=undercut_faces,
-                parting_plane_axis=analyse["best_plane"]  # jetzt: 'XY', 'YZ', ...
-
+                parting_plane_axis=analyse["best_plane"]
             )
 
         ml_input = {
@@ -69,10 +70,10 @@ def render_config():
             "surface_area_mm2": features["surface_area_mm2"],
             "aspect_ratio": features["aspect_ratio"],
             "kanal_durchmesser": config["kanal_durchmesser"],
-            "kanal_abstand": config["kanal_abstand"]
+            "kanal_abstand":    config["kanal_abstand"]
         }
         prediction_kw = predict_kuehlleistung_lgbm(ml_input)
-        st.metric("🧊 Geschätzte Kühlleistung", f"{prediction_kw} kW")
+        st.metric("Geschätzte Kühlleistung", f"{prediction_kw} kW")
 
     else:
-        st.info("Bitte eine gültige STL-Datei hochladen.")
+        st.info("Bitte eine gültige STL‑Datei hochladen.")
