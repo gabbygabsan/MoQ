@@ -6,7 +6,7 @@ from ui.sidebar import render_sidebar
 from logic.geometry import extract_geometry_features
 from logic.ml_lgbm import predict_kuehlleistung_lgbm
 from viewer.plotly_viewer import show_3d_plotly
-from router import navigate_to
+from router import navigate_to, PAGE_START, PAGE_CONFIG
 
 # Neuer Import: unsere Mehrkriterien‑Analyse
 from logic.parting_analysis import analyze_parting_plane
@@ -14,8 +14,8 @@ from logic.parting_analysis import analyze_parting_plane
 import plotly.graph_objects as go
 
 def render_config():
-    st.sidebar.title(" Navigation")
-    seite = st.sidebar.radio("Seite wählen:", ["Start", "⚙️ Konfigurator"], index=1)
+    # radio mit exakt den gleichen Strings
+    seite = st.sidebar.radio("Seite wählen:",[PAGE_START, PAGE_CONFIG], index=1)
     navigate_to(seite)
 
     show_parting_analysis = st.sidebar.checkbox("Trennflächen‑Analyse anzeigen", value=False)
