@@ -64,10 +64,6 @@ def compute_parting_line_complexity(mesh: trimesh.Trimesh, axis: str) -> float:
             total_length += length
         return total_length
     except (ImportError, ModuleNotFoundError):
-        return 0.0
-    except Exception:
-        return 0.0
-    except (ImportError, ModuleNotFoundError):
         # networkx nicht verfügbar, Komplexität nicht berechenbar
         return 0.0
     except Exception:

@@ -1,6 +1,4 @@
-import os
 import streamlit as st
-from PIL import Image
 
 from ui.sidebar import render_sidebar
 from logic.geometry import extract_geometry_features
@@ -10,8 +8,6 @@ from router import navigate_to, PAGE_START, PAGE_CONFIG
 
 # Neuer Import: unsere Mehrkriterien‑Analyse
 from logic.parting_analysis import analyze_parting_plane
-
-import plotly.graph_objects as go
 
 def render_config():
     # radio mit exakt den gleichen Strings
@@ -43,6 +39,7 @@ def render_config():
         st.write("**Aspektverhältnis:**", f"{features['aspect_ratio']:.2f}")
 
         undercut_faces = []
+        parting_plane_axis = None
         if show_parting_analysis:
             analyse = analyze_parting_plane(mesh)
             st.subheader("Trennflächen‑Analyse")
@@ -50,6 +47,7 @@ def render_config():
             st.write("Beste Trennfläche:", analyse["best_plane"])
             st.write("Anzahl Hinterschneidungen:", len(analyse["undercuts"]))
             undercut_faces = analyse["undercuts"]
+            parting_plane_axis = analyse["best_plane"]
 
         with st.expander("3D‑Vorschau mit Kühlkanälen"):
             show_3d_plotly(
@@ -61,7 +59,7 @@ def render_config():
                 anzahl_z=config["anzahl_z"],
                 heatmap=config["heatmap"],
                 highlight_faces=undercut_faces,
-                parting_plane_axis=analyse["best_plane"]
+                parting_plane_axis=parting_plane_axis
             )
 
         ml_input = {
