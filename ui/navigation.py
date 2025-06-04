@@ -1,6 +1,4 @@
-import os
 import streamlit as st
-from PIL import Image
 
 from ui.sidebar import render_sidebar
 from logic.geometry import extract_geometry_features
@@ -10,8 +8,6 @@ from router import navigate_to, PAGE_START, PAGE_CONFIG
 
 # Neuer Import: unsere Mehrkriterien‑Analyse
 from logic.parting_analysis import analyze_parting_plane
-
-import plotly.graph_objects as go
 
 def render_config():
     # radio mit exakt den gleichen Strings
