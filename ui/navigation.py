@@ -43,6 +43,7 @@ def render_config():
         st.write("**Aspektverhältnis:**", f"{features['aspect_ratio']:.2f}")
 
         undercut_faces = []
+        parting_plane_axis = None
         if show_parting_analysis:
             analyse = analyze_parting_plane(mesh)
             st.subheader("Trennflächen‑Analyse")
@@ -50,6 +51,7 @@ def render_config():
             st.write("Beste Trennfläche:", analyse["best_plane"])
             st.write("Anzahl Hinterschneidungen:", len(analyse["undercuts"]))
             undercut_faces = analyse["undercuts"]
+            parting_plane_axis = analyse["best_plane"]
 
         with st.expander("3D‑Vorschau mit Kühlkanälen"):
             show_3d_plotly(
@@ -61,7 +63,7 @@ def render_config():
                 anzahl_z=config["anzahl_z"],
                 heatmap=config["heatmap"],
                 highlight_faces=undercut_faces,
-                parting_plane_axis=analyse["best_plane"]
+                parting_plane_axis=parting_plane_axis
             )
 
         ml_input = {
